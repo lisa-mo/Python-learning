@@ -41,13 +41,3 @@ def update(quantity, price, item):
     conn.commit()
     conn.close()
 
-
-create_table()
-insert("Scotch Glass", 1, 500)
-insert("Bees", 1, 500)
-update(11, 6, "Scotch Glass")
-insert("Water Glass", 10, 5)
-insert("Wine Glass", 50, 10)
-insert("Jin Glass", 50, 10)
-delete("Bees")
-print(view())

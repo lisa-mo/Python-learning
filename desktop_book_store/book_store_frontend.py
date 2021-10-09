@@ -38,7 +38,7 @@ def update_command():
     book_store_backend.update(selected_tuple[0], title_text.get(), author_text.get(), year_text.get(), isbn_text.get())
 
 
-def get_selected_row():
+def get_selected_row(event):
     try:
         global selected_tuple
         if main_list.curselection():

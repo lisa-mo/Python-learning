@@ -18,4 +18,10 @@ venv/
 # build folder
 build/
 
+# folder for tests
+test_folder/
+
+# folder for treadpool tests
+tread_wiki/
+
 

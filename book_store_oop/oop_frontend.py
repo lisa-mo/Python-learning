@@ -1,3 +1,10 @@
+from tkinter import *
+
+from book_store_oop.сonfig_reader import ConfigReader
+from oop_backend import Database
+from base_frontend import Front
+from book_store_oop.libs.constants import TitlesAndLabels, DBname, Reader, Buttons
+
 """
 This program stores book information as follows:
 Title, Author, Year, ISBN
@@ -10,10 +17,9 @@ User can perform the next activities:
 - Close the program
 """
 
-from tkinter import *
-from oop_backend import Database
-
-database = Database("book_store.db")
+database = Database(DBname.DB_NAME)
+front = Front()
+config_reader = ConfigReader(Reader.JSON_INI_FILE_NAME)
 
 
 def view_command():
@@ -40,7 +46,12 @@ def update_command():
     database.update(selected_tuple[0], title_text.get(), author_text.get(), year_text.get(), isbn_text.get())
 
 
-def get_selected_row():
+def close_command():
+    close = front.window.destroy
+    return close
+
+
+def get_selected_row(event):
     try:
         global selected_tuple
         if main_list.curselection():
@@ -58,42 +69,32 @@ def get_selected_row():
         pass
 
 
-window = Tk()
+front.window.wm_title(TitlesAndLabels.MAIN_TITLE)  # refactor as it has to be a normal str
 
-window.wm_title("Book Store")
-
-title_label = Label(window, text="Title")
-title_label.grid(row=0, column=0)
-
-author_label = Label(window, text="Author")
-author_label.grid(row=0, column=2)
-
-year_label = Label(window, text="Year")
-year_label.grid(row=1, column=0)
-
-isbn_label = Label(window, text="ISBN")
-isbn_label.grid(row=1, column=2)
+title_label = front.create_front_lable(config_reader, TitlesAndLabels.TITLE_LABEL)
+author_label = front.create_front_lable(config_reader, TitlesAndLabels.AUTHOR_LABEL)
+year_label = front.create_front_lable(config_reader, TitlesAndLabels.YEAR_LABEL)
+isbn_label = front.create_front_lable(config_reader, TitlesAndLabels.ISBN_LABEL)
 
 title_text = StringVar()
-title_entry = Entry(window, textvariable=title_text)
+title_entry = Entry(front.window, textvariable=title_text)
 title_entry.grid(row=0, column=1)
 
 author_text = StringVar()
-author_entry = Entry(window, textvariable=author_text)
+author_entry = Entry(front.window, textvariable=author_text)
 author_entry.grid(row=0, column=3)
 
 year_text = StringVar()
-year_entry = Entry(window, textvariable=year_text)
+year_entry = Entry(front.window, textvariable=year_text)
 year_entry.grid(row=1, column=1)
 
 isbn_text = StringVar()
-isbn_entry = Entry(window, textvariable=isbn_text)
+isbn_entry = Entry(front.window, textvariable=isbn_text)
 isbn_entry.grid(row=1, column=3)
 
-main_list = Listbox(window, height=6, width=60)
-main_list.grid(row=2, column=0, rowspan=6, columnspan=2)
+main_list = front.create_list_field(6, 40, 2, 0, 6, 2)
 
-ml_scroll_bar = Scrollbar(window)
+ml_scroll_bar = Scrollbar(front.window)
 ml_scroll_bar.grid(row=2, column=2, rowspan=6)
 
 main_list.configure(yscrollcommand=ml_scroll_bar.set)
@@ -101,22 +102,11 @@ ml_scroll_bar.configure(command=main_list.yview)
 
 main_list.bind('<<ListboxSelect>>', get_selected_row)
 
-view_button = Button(window, text="View all", width=12, command=view_command)
-view_button.grid(row=2, column=3)
+view_button = front.create_front_button(config_reader, Buttons.VIEW_BUTTON, view_command)
+search_button = front.create_front_button(config_reader, Buttons.SEARCH_BUTTON, search_command)
+add_button = front.create_front_button(config_reader, Buttons.ADD_BUTTON, add_command)
+update_button = front.create_front_button(config_reader, Buttons.UPDATE_BUTTON, update_command)
+delete_button = front.create_front_button(config_reader, Buttons.DELETE_BUTTON, delete_command)
+# close_button = front.create_front_button(config_reader, Buttons.CLOSE_BUTTON, close_command)
 
-search_button = Button(window, text="Search entry", width=12, command=search_command)
-search_button.grid(row=3, column=3)
-
-add_button = Button(window, text="Add entry", width=12, command=add_command)
-add_button.grid(row=4, column=3)
-
-update_button = Button(window, text="Update", width=12, command=update_command)
-update_button.grid(row=5, column=3)
-
-delete_button = Button(window, text="Delete", width=12, command=delete_command)
-delete_button.grid(row=6, column=3)
-
-close_button = Button(window, text="Close", width=12, command=window.destroy)
-close_button.grid(row=7, column=3)
-
-window.mainloop()
+front.window.mainloop()

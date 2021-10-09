@@ -11,7 +11,7 @@ cursor = my_connection.cursor()
 
 word = input("Enter a word: ")
 
-query = cursor.execute("SELECT Definition FROM Dictionary WHERE Expression = '%s' " % word)
+query = cursor.execute("SELECT Definition FROM Dictionary WHERE Expression = "f"'{word}'")
 results = cursor.fetchall()
 
 if results:
